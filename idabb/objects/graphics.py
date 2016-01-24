@@ -80,21 +80,42 @@ class Triangle(Shape):
         ), ('c4f', self.vertice_colors))
 
 class Box(Shape):
+    def __init__(self, *args, outline=False, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.outline = outline
+
     """ Draws rectangles and squares """
     @property
     def verticies(self):
-        return (
-            self.left, self.bottom, #bottom left corner
-            self.left, self.top, #top left corner
-            self.right, self.top, #top right corner
-            self.right, self.bottom #top bottom corner
-        )
+        if self.outline is False:
+            return (
+                self.left, self.bottom, #bottom left corner
+                self.left, self.top, #top left corner
+                self.right, self.top, #top right corner
+                self.right, self.bottom #top bottom corner
+            )
+        else:
+            return (
+                self.left, self.bottom, #bottom left corner
+                self.left, self.top, #top left corner
+                self.left, self.top, #top left corner
+                self.right, self.top, #top right corner
+                self.right, self.top, #top right corner
+                self.right, self.bottom, #top bottom corner
+                self.right, self.bottom, #top bottom corner
+                self.left, self.bottom #bottom left corner
+            )
     
     @property
-    def vertice_colors(self):
-        return self.color * 4
+    def vertice_colors(self, vertices=4):
+        return self.color * vertices
 
     def draw(self):
-        pyglet.graphics.draw(4, pyglet.gl.GL_QUADS, (
-            'v2f', self.verticies,
-        ), ('c4f', self.vertice_colors))
+        if self.outline is False:
+            pyglet.graphics.draw(4, pyglet.gl.GL_QUADS, (
+                'v2f', self.verticies,
+            ), ('c4f', self.vertice_colors))
+        else:
+            pyglet.graphics.draw(8, pyglet.gl.GL_LINES, (
+                'v2f', self.verticies,
+            ), ('c4f', self.color * 8))
